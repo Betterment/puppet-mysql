@@ -12,6 +12,11 @@ class mysql::config {
   $executable = "${boxen::config::homebrewdir}/bin/mysqld_safe"
   $logdir     = "${boxen::config::logdir}/mysql"
   $logerror   = "${logdir}/error.log"
-  $port       = 13306
+  $port       = 3306
   $socket     = "${datadir}/socket"
+  $loggeneral = "${logdir}/general.log"
+  $charset    = 'utf8mb4'
+  $collation  = 'utf8mb4_unicode_ci'
+  $casing     = 2
+  $engine     = 'innodb'
 }
