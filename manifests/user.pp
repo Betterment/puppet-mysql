@@ -17,7 +17,7 @@ define mysql::user($ensure = present,
   require mysql
 
   if $ensure == 'present' {
-    exec { "create mysql user ${name}":
+    exec { "create mysql user ${name} @ ${host}":
       command => "mysql -uroot --password='' -e \"\
 CREATE USER '${name}'@'${host}' IDENTIFIED BY '${password}';\
 GRANT ${grant} PRIVILEGES ON * . * TO '${name}'@'${host}';\

@@ -9,7 +9,7 @@ define mysql::db($ensure = present, $user = absent, $password = 'password', $hos
   require mysql
 
   if $ensure == 'present' {
-    exec { "create mysql db ${name}":
+    exec { "create mysql db ${name} @ ${host}":
       command => "mysqladmin -uroot create ${name} --password=''",
       creates => "${mysql::config::datadir}/${name}",
       require => Exec['wait-for-mysql'],
@@ -34,7 +34,7 @@ define mysql::db($ensure = present, $user = absent, $password = 'password', $hos
     }
 
     if $user != 'absent' {
-      exec { "drop user ${user}@${host}":
+      exec { "drop user ${user} @ ${host}":
         command => "mysql -uroot -e \"\
  GRANT USAGE ON *.* TO '${user}'@'${host}'; DROP USER '${user}'@'${host}';\
  GRANT USAGE ON *.* TO '${user}'@'localhost'; DROP USER '${user}'@'localhost';\
