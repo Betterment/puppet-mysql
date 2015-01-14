@@ -5,9 +5,9 @@ require 'formula'
 class Mysql < Formula
 
   homepage 'http://dev.mysql.com/doc/refman/5.6/en/'
-  url 'http://s3.amazonaws.com/better-boxen/src/mysql-5.6.20.tar.gz'
-  sha1 '10f9ed2bbf3fbf227b799f1c7af3a0c7f7cf4d95'
-  version '5.6.20-boxen1'
+  url 'http://s3.amazonaws.com/better-boxen/src/mysql-5.6.21.tar.gz'
+  sha1 'be068ba90953aecdb3f448b4ba1d35796eb799eb'
+  version '5.6.21-boxen1'
 
   depends_on 'cmake' => :build
   depends_on 'pidof' unless MacOS.version >= :mountain_lion
