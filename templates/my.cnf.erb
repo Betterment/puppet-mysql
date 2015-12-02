@@ -1,14 +1,14 @@
 [client]
-default-character-set=<%= scope.lookupvar "mysql::config::charset" %>
-port=<%= scope.lookupvar "mysql::config::port" %>
-socket=<%= scope.lookupvar "mysql::config::socket" %>
+host=<%= @host %>
+port=<%= @port %>
+socket=<%= @socket %>
 
 [server]
-port=<%= scope.lookupvar "mysql::config::port" %>
-log-error=<%= scope.lookupvar "mysql::config::logerror" %>
-general_log_file=<%= scope.lookupvar "mysql::config::loggeneral" %>
-datadir=<%= scope.lookupvar "mysql::config::datadir" %>
-socket=<%= scope.lookupvar "mysql::config::socket" %>
+datadir=<%= @datadir %>
+log-error=<%= "#{@logdir}/error.log" %>
+bind-address=<%= @host %>
+port=<%= @port %>
+socket=<%= @socket %>
 default-storage-engine=<%= scope.lookupvar "mysql::config::engine" %>
 max_allowed_packet=1073741824
 sql-mode="NO_ENGINE_SUBSTITUTION"

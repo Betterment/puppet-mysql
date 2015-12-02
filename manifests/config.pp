@@ -3,21 +3,74 @@
 # Examples
 #
 #   include mysql::config
-class mysql::config(
-  $port       = 3306
-) {
-  require boxen::config
 
-  $configdir  = "${boxen::config::configdir}/mysql"
-  $configfile = "${configdir}/my.cnf"
-  $datadir    = "${boxen::config::datadir}/mysql"
-  $executable = "${boxen::config::homebrewdir}/bin/mysqld_safe"
-  $logdir     = "${boxen::config::logdir}/mysql"
-  $logerror   = "${logdir}/error.log"
-  $loggeneral = "${logdir}/general.log"
-  $socket     = "${datadir}/socket"
-  $charset    = 'utf8mb4'
-  $collation  = 'utf8mb4_unicode_ci'
-  $casing     = 2
-  $engine     = 'innodb'
+class mysql::config(
+  $ensure = undef,
+
+  $configdir = undef,
+  $bindir = undef,
+  $globalconfigprefix = undef,
+  $datadir = undef,
+  $executable = undef,
+
+  $logdir = undef,
+
+  $host = undef,
+  $port = undef,
+  $socket = undef,
+  $user = undef,
+) {
+
+  File {
+    ensure => $ensure,
+    owner  => $user,
+  }
+
+  file {
+    [
+      $configdir,
+      $datadir,
+      $logdir,
+    ]:
+      ensure => directory ;
+
+    "${configdir}/my.cnf":
+      content => template('mysql/my.cnf.erb'),
+      notify  => Service['mysql'] ;
+  }
+
+  ->
+  exec { 'init-mysql-db':
+    command  => "${bindir}/mysql_install_db \
+      --verbose \
+      --basedir=${globalconfigprefix} \
+      --datadir=${datadir} \
+      --tmpdir=/tmp",
+    creates  => "${datadir}/mysql",
+    provider => shell,
+    user     => $user,
+  }
+
+  ->
+  boxen::env_script { 'mysql':
+    ensure   => $ensure,
+    content  => template('mysql/env.sh.erb'),
+    priority => 'higher',
+  }
+
+  if $::osfamily == 'Darwin' {
+    file {
+    "${boxen::config::envdir}/mysql.sh":
+      ensure => absent ;
+
+    "${globalconfigprefix}/var/mysql":
+      ensure  => absent,
+      force   => true,
+      recurse => true ;
+
+    "${globalconfigprefix}/etc/my.cnf":
+      ensure  => link,
+      target  => "${configdir}/my.cnf" ;
+    }
+  }
 }
