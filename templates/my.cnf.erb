@@ -9,26 +9,26 @@ log-error=<%= "#{@logdir}/error.log" %>
 bind-address=<%= @host %>
 port=<%= @port %>
 socket=<%= @socket %>
-default-storage-engine=<%= scope.lookupvar "mysql::config::engine" %>
+
+default-storage-engine=innodb
 max_allowed_packet=1073741824
 sql-mode="NO_ENGINE_SUBSTITUTION"
 character-set-client-handshake=FALSE
-character-set-server=<%= scope.lookupvar "mysql::config::charset" %>
-collation-server=<%= scope.lookupvar "mysql::config::collation" %>
-init-connect='SET collation_connection=<%= scope.lookupvar "mysql::config::collation" %>'
-init-connect='SET NAMES <%= scope.lookupvar "mysql::config::charset" %> COLLATE <%= scope.lookupvar "mysql::config::collation" %>'
-lower_case_table_names=<%= scope.lookupvar "mysql::config::casing" %>
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+init-connect='SET collation_connection=utf8mb4_unicode_ci'
+init-connect='SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'
+lower_case_table_names=2
 max_sp_recursion_depth=3
-# https://bugs.mysql.com/bug.php?id=71960
-table_open_cache=500
-<% if (scope.lookupvar "mysql::config::engine") == 'innodb' %>
 innodb_buffer_pool_size=1024Mb
 innodb_log_file_size=128Mb
 innodb_file_per_table
 innodb_file_format=Barracuda
 innodb_large_prefix
 innodb_flush_log_at_trx_commit=2
-<% end %>
+
+# https://bugs.mysql.com/bug.php?id=71960
+table_open_cache=500
 
 [mysqldump]
-default-character-set=<%= scope.lookupvar "mysql::config::charset" %>
+default-character-set=utf8mb4
