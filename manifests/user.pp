@@ -20,7 +20,7 @@ define mysql::user(
     exec { "create mysql user ${name}":
       command => "${mysql::bindir}/mysql -h${mysql::host} -uroot -p${mysql::port} --password=''\
         -e \"create user '${name}'@'${host}' identified by '${password}';\
-             grant all privileges on * . * to '${name}'@'${host};\"",
+             grant all privileges on * . * to '${name}'@'${host}';\"",
       require => Exec['wait-for-mysql'],
       unless  => "${mysql::bindir}/mysql -h${mysql::host} -uroot -p${mysql::port} -e 'SELECT User,Host FROM mysql.user;' \
         --password='' | grep -w '${name}' | grep -w '${host}'"
