@@ -39,6 +39,11 @@ class mysql::config(
       notify  => Service['mysql'] ;
   }
 
+  file { "${configdir}/my-default.cnf":
+    ensure => 'link',
+    target => "${configdir}/my.cnf",
+  }
+
   ->
   exec { 'init-mysql-db':
     command  => "${bindir}/mysql_install_db \
