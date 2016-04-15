@@ -1,6 +1,6 @@
 # Public: Create MySQL User
 #
-# namevar - The name of the user.
+# username - The username of the user.
 # password - Password for the new user. Defaults to empty
 # readonly - If the user should be read-only. Defaults to false
 # databases - Databases to grant access to. Defaults to [].
@@ -10,6 +10,7 @@
 #
 #   mysql::user { 'foo': }
 define mysql::user(
+  $username = $name,
   $ensure   = present,
   $host     = 'localhost',
   $password = '',
@@ -19,15 +20,15 @@ define mysql::user(
   if $ensure == 'present' {
     exec { "create mysql user ${name}":
       command => "${mysql::bindir}/mysql -h${mysql::host} -uroot -p${mysql::port} --password=''\
-        -e \"create user '${name}'@'${host}' identified by '${password}';\
-             grant all privileges on * . * to '${name}'@'${host}';\"",
+        -e \"create user '${username}'@'${host}' identified by '${password}';\
+             grant all privileges on * . * to '${username}'@'${host}';\"",
       require => Exec['wait-for-mysql'],
       unless  => "${mysql::bindir}/mysql -h${mysql::host} -uroot -p${mysql::port} -e 'SELECT User,Host FROM mysql.user;' \
-        --password='' | grep -w '${name}' | grep -w '${host}'"
+        --password='' | grep -w '${username}' | grep -w '${host}'"
     }
   } elsif $ensure == 'absent' {
     exec { "delete mysql user ${name}":
-      command => "${mysql::bindir}/mysql -h${mysql::host} -uroot -p${mysql::port} --password='' -e 'drop user ${name}'",
+      command => "${mysql::bindir}/mysql -h${mysql::host} -uroot -p${mysql::port} --password='' -e 'drop user ${username}'",
       require => Exec['wait-for-mysql']
     }
   }
